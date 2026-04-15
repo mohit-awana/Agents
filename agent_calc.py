@@ -57,9 +57,6 @@ SYSTEM = (
 SUPPORTED = {"add", "subtract", "multiply", "divide", "+", "-", "*", "/"}
 
 def agent(user_input: str) -> str:
-    # if not any(op in user_input for op in SUPPORTED):
-    #     print("Agent: Unsupported operation.")
-    #     return "Unsupported operation."
     messages = [
         {"role": "system", "content": SYSTEM},
         {"role": "user",   "content": user_input},
@@ -80,12 +77,10 @@ def agent(user_input: str) -> str:
             return msg.content
 
         for call in msg.tool_calls:
-            tool_name = call.function.name
             tool_cls = TOOLS.get(call.function.name)
             if tool_cls is None:
-                print(f"Sorry, I've limited toolds, I don’t support '{tool_name}'. Please try another question.")
 
-                #raise KeyError(f"Unknown tool: {call.function.name}")
+                raise KeyError(f"Unknown tool: {call.function.name}")
 
             try:
                 result = tool_cls.model_validate(call.function.arguments).run()
